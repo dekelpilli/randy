@@ -1,14 +1,14 @@
 {:paths      ["src"]
  :deps       {org.clojure/clojure       {:mvn/version "1.11.1"}
               org.clojure/clojurescript {:mvn/version "1.11.60"}}
- :aliases    {:test     {:extra-deps {lambdaisland/kaocha {:mvn/version "1.71.1119"}}
+ :aliases    {:test     {:extra-deps {lambdaisland/kaocha {:mvn/version "1.85.1342"}}
                          :main-opts  ["-m" "kaocha.runner"]}
               :perf     {:extra-deps  {incanter/incanter-charts {:mvn/version "1.9.3"}
                                        incanter/incanter-core   {:mvn/version "1.9.3"}}
                          :extra-paths ["perf/src"]}
-              :outdated {:extra-deps {olical/depot {:mvn/version "2.3.0"}}
-                         :main-opts  ["-m" "depot.outdated.main"]}
-              :build    {:deps       {io.github.seancorfield/build-clj {:git/tag "v0.8.3" :git/sha "7ac1f8d"}
-                                      lambdaisland/kaocha              {:mvn/version "1.71.1119"}}
+              :outdated {:deps      {com.github.liquidz/antq {:mvn/version "RELEASE"}}
+                         :main-opts ["-m" "antq.core"]}
+              :build    {:deps       {io.github.clojure/tools.build {:mvn/version "0.9.6"}
+                                      lambdaisland/kaocha           {:mvn/version "1.85.1342"}}
                          :ns-default build}}
  :test-paths ["test"]}

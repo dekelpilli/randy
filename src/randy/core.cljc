@@ -1,7 +1,7 @@
 (ns randy.core
   (:refer-clojure :exclude [shuffle])
-  (:require [randy.rng :as rng]
-            #?(:cljs [goog.array :as garray]))
+  (:require #?(:cljs [goog.array :as garray])
+            [randy.rng :as rng])
   #?(:clj (:import (java.util Random))))
 
 (def default-rng
@@ -88,14 +88,13 @@
 (defn shuffle
   ([coll] (shuffle @default-rng coll))
   ([rng coll]
-   #?(:clj  (let [al (java.util.ArrayList. ^java.util.Collection coll)]
-              (java.util.Collections/shuffle
-                al
-                (if (instance? Random rng)
-                  rng
-                  (proxy
-                    [Random] []
-                    (nextInt [_ upper] (rng/next-int rng upper)))))
+   #?(:clj  (let [al (java.util.ArrayList. ^java.util.Collection coll)
+                  ^Random rnd (if (instance? Random rng)
+                                rng
+                                (proxy
+                                  [Random] []
+                                  (nextInt [_ upper] (rng/next-int rng upper))))]
+              (java.util.Collections/shuffle al rnd)
               (clojure.lang.RT/vector (.toArray al)))
       :cljs (let [a (to-array coll)]
               (garray/shuffle a #(rng/next-double rng))
@@ -112,12 +111,11 @@
       (if (= n built)
         (persistent! out)
         (let [remaining (dec remaining)]
-          (recur built
-                 remaining
-                 out
-                 (-> in
-                     (assoc! idx (get in (dec remaining)))
-                     (pop!))))))))
+          (->> (dec remaining)
+               (get in)
+               (assoc! in idx)
+               pop!
+               (recur built remaining out)))))))
 
 (def ^:dynamic *shuffle-strategy-pred*
   "Function deciding on strategy for sample-without-replacement."
