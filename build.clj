@@ -12,6 +12,8 @@
 (def ^:private config
   {:lib             'com.github.dekelpilli/randy
    :version         (format "0.0.%s" (b/git-count-revs nil))
+   :licenses        [{:name "MIT"
+                      :url  "https://github.com/dekelpilli/randy/blob/master/LICENSE"}]
    :github-actions? true})
 
 (defn jar [opts]
