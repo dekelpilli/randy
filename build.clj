@@ -2,40 +2,23 @@
   "
   clojure -T:build deploy
 
-  clojure -T:build run-doc-tests :aliases '[:cljs]'
-
   Run tests:
   clojure -X:test
-  clojure -X:test:master
-
-  For more information, run:
-
-  clojure -A:deps -T:build help/doc
   "
-  (:refer-clojure :exclude [test])
-  (:require [clojure.tools.build.api :as b]
-            [org.corfield.build :as bb]))
+  (:require
+    [build-edn.core :as build-edn]
+    [clojure.tools.build.api :as b]))
 
-(def lib 'com.github.dekelpilli/randy)
-(def version (format "0.0.%s" (b/git-count-revs nil)))
-
-(defn test [opts]
-  (bb/run-tests opts))
-
-(defn clean [opts]
-  (bb/clean opts))
+(def ^:private config
+  {:lib             'com.github.dekelpilli/randy
+   :version         (format "0.0.%s" (b/git-count-revs nil))
+   :github-actions? true})
 
 (defn jar [opts]
-  (-> opts
-      (assoc :lib lib :version version)
-      (bb/jar)))
+  (build-edn/jar (merge config opts)))
+
+(defn install [opts]
+  (build-edn/install (merge config opts)))
 
 (defn deploy [opts]
-  (-> opts
-      (assoc :lib lib :version version)
-      (bb/deploy)))
-
-(defn dry-run [opts]
-  (-> opts
-      (assoc :lib lib :version version)
-      println))
+  (build-edn/deploy (merge config opts)))
